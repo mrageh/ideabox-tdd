@@ -2,9 +2,6 @@ require "./test/test_helper"
 require "./lib/ideabox/idea"
 
 class IdeaTest < Minitest::Test
-  def test_it_exists
-    assert Idea
-  end
 
   def test_basic_idea
     idea = Idea.new("title", "description")
