@@ -1,4 +1,19 @@
 class IdeaStore
+
+  def self.database
+    return @database if @database
+
+    @database ||= YAML::Store.new("db/ideabox")
+    @database.transaction do
+      @database['ideas'] ||= []
+    end
+    @database
+  end
+
+  def database
+    Idea.database
+  end
+
   def self.all
     @all ||= []
   end
@@ -11,6 +26,12 @@ class IdeaStore
 
   def self.find(id)
     all[id]
+  end
+
+  def self.find_by_title(title)
+    all.find do |idea|
+      idea.title == title
+    end
   end
 
   def self.next_id

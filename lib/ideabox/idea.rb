@@ -1,8 +1,8 @@
 class Idea
   include Comparable
 
-  attr_accessor :id
-  attr_reader :rank, :title, :description
+  attr_accessor :id, :title, :description
+  attr_reader :rank
 
   def initialize(title, description)
     @title       = title
@@ -16,6 +16,10 @@ class Idea
 
   def <=>(other)
     rank <=> other.rank
+  end
+
+  def database
+    Idea.database
   end
 
 end

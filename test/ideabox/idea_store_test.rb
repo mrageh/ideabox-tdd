@@ -33,6 +33,18 @@ class IdeaStoreTest < Minitest::Test
     assert_equal "looking at the stars", idea.description
   end
 
+  def test_find_by_title
+    dance = Idea.new("dance", "like it's the 80s")
+    sleep = Idea.new("sleep", "like a baby")
+    dream = Idea.new("dream", "like anything is possible")
+    IdeaStore.save(dance)
+    IdeaStore.save(sleep)
+    IdeaStore.save(dream)
+
+    idea = IdeaStore.find_by_title('sleep')
+    assert_equal 'like a baby', idea.description
+  end
+
   # def test_update_idea
   #   idea = Idea.new("drink", "tomato juice")
   #   id = IdeaStore.save(idea)
