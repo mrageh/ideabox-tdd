@@ -66,9 +66,32 @@ class IdeaboxAppHelper < Minitest::Test
     assert_equal 0, IdeaStore.count
   end
 
-  def test_an_idea_can_be_created_via_sms
-    assert_equal 0, IdeaStore.all.count
+  def test_like_idea
+    sing = Idea.new('sing', 'happy songs')
+    id = IdeaStore.save(sing)
 
+    put "/#{id}/like"
+    idea = IdeaStore.find(id)
+    assert_equal 1, idea.rank
+
+    5.times do
+      put "/#{id}/like"
+    end
+
+    assert_equal 6, idea.rank
   end
+  # def test_an_idea_can_be_created_via_sms
+  #   assert_equal 0, IdeaStore.all.count
+
+  #   url = "/sms/"
+  #   params = {"Body"=> "Breathe, fresh air in the mountains" }
+
+  #   get url, params
+
+  #   assert_equal 1, IdeaStore.all.count
+  #   idea = IdeaStore.all.last
+  #   assert_equal "Breathe", idea.title
+  #   assert_equal "fresh air in the mountains", idea.description
+  # end
 
 end

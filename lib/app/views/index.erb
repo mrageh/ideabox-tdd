@@ -20,6 +20,7 @@
           <input type='submit' value="Delete"/>
         </form>
         <form action='/<%= idea.id %>/like' method='POST' style="display: inline">
+          <input type="hidden" name="_method" value="PUT">
           <input type='submit' value="+"/>
         </form>
       </li>

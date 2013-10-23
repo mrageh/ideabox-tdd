@@ -85,7 +85,10 @@ class IdeaManagementTest < Minitest::Test
   end
 
   def test_ranking_ideas
-    skip #Because this shitty test fails!!!!!
+     #Because this shitty test fails!!!!!
+     #Finally found out why its failing
+     #I was trying to use put instead of
+     #Post even though put is used to update as well!!!!!!
     id1 = IdeaStore.save Idea.new("fun", "ride horses")
     id2 = IdeaStore.save Idea.new("vacation", "camping in the mountains")
     id3 = IdeaStore.save Idea.new("write", "a book about being brave")
@@ -100,13 +103,13 @@ class IdeaManagementTest < Minitest::Test
     idea.like!
     IdeaStore.save(idea)
 
-    within("idea_#{id2}") do
+    within("#idea_#{id2}") do
       3.times do
         click_button '+'
       end
     end
 
-    within("idea_#{id3}") do
+    within("#idea_#{id3}") do
       click_button '+'
     end
 

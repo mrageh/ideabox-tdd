@@ -4,19 +4,10 @@ class IdeaboxApp < Sinatra::Base
   set :method_override, true
   set :root, "./lib/app"
 
-  get '/' do
-    erb :index, locals: {ideas: IdeaStore.all.sort.reverse}
-  end
-
   post '/' do
     idea = Idea.new(params[:title], params[:description])
     IdeaStore.save(idea)
     redirect '/'
-  end
-
-  get '/:id' do |id|
-    idea = IdeaStore.find(id.to_i)
-    erb :edit, locals: {idea: idea}
   end
 
   put '/:id' do |id|
@@ -32,4 +23,19 @@ class IdeaboxApp < Sinatra::Base
     redirect '/'
   end
 
+  put '/:id/like' do |id|
+    idea = IdeaStore.find(id.to_i)
+    idea.like!
+    IdeaStore.save(idea)
+    redirect '/'
+  end
+
+  get '/:id' do |id|
+    idea = IdeaStore.find(id.to_i)
+    erb :edit, locals: {idea: idea}
+  end
+
+  get '/' do
+    erb :index, locals: {ideas: IdeaStore.all.sort.reverse}
+  end
 end
