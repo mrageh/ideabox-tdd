@@ -1,10 +1,11 @@
+ENV['RACK_ENV'] = 'test'
 require "./test/test_helper"
 require "bundler"
 Bundler.require
 require "rack/test"
 require "capybara"
 require "capybara/dsl"
-
+require "pry"
 require "./lib/app"
 
 Capybara.app = IdeaboxApp
@@ -23,8 +24,8 @@ class IdeaManagementTest < Minitest::Test
   def test_manage_ideas
     #Create a two decoys
     #So we know this is what we are editing
-    dinner = Idea.new("dinner", "spaghetti and meatballs")
-    drinks = Idea.new("drinks", "imported beers")
+    dinner = Idea.new("title" => "dinner","description" => "spaghetti and meatballs", "tag" => "testing")
+    drinks = Idea.new("title" => "drinks", "description" => "imported beers", "tag" => "wooow")
     IdeaStore.save(dinner)
     IdeaStore.save(drinks)
 
@@ -38,13 +39,13 @@ class IdeaManagementTest < Minitest::Test
     #Fill in the form
     fill_in 'title', :with => 'eat'
     fill_in 'description', :with => 'chocolate chip cookies'
+    fill_in 'tag', :with => 'yummy'
     click_button 'Save'
     assert page.has_content?("chocolate chip cookies"), "Idea is not on page"
 
     #Find the idea, we need the ID to
     #find it on the page to edit
     idea = IdeaStore.find_by_title('eat')
-
 
     #Edit an idea
     within("#idea_#{idea.id}") do
@@ -53,9 +54,11 @@ class IdeaManagementTest < Minitest::Test
 
     assert_equal 'eat', find_field('title').value
     assert_equal "chocolate chip cookies", find_field('description').value
+    assert_equal 'yummy', find_field('tag').value
 
     fill_in 'title', :with => 'maybe later'
     fill_in 'description', :with => 'I will eat my food after my meeting'
+    fill_in 'tag', :with => 'food'
 
     click_button 'Save'
 
@@ -89,17 +92,17 @@ class IdeaManagementTest < Minitest::Test
      #Finally found out why its failing
      #I was trying to use put instead of
      #Post even though put is used to update as well!!!!!!
-    id1 = IdeaStore.save Idea.new("fun", "ride horses")
-    id2 = IdeaStore.save Idea.new("vacation", "camping in the mountains")
-    id3 = IdeaStore.save Idea.new("write", "a book about being brave")
+    id1 = IdeaStore.save Idea.new("title" => "fun", "description" => "ride horses")
+    id2 = IdeaStore.save Idea.new("title" => "vacation", "description" => "camping in the mountains")
+    id3 = IdeaStore.save Idea.new("title" => "write", "description" => "a book about being brave")
 
     visit '/'
 
-    idea = IdeaStore.all[1]
-    idea.like!
-    idea.like!
-    idea.like!
-    idea.like!
+    idea = IdeaStore.find(id2) #My rank is not being incremented when we call a object stored in all?
+    idea.like!                 #If we call like! on just a idea the rank is incremented??
+    idea.like!                 #Could it be because of the way my all method works? No
+    idea.like!                 #It is now very clear that the rank is incremented in development db
+    idea.like!                 #But it is not incremented here in the test db?? very strange!!
     idea.like!
     IdeaStore.save(idea)
 
@@ -114,9 +117,9 @@ class IdeaManagementTest < Minitest::Test
     end
 
     # now check that the order is correct
-    ideas = page.all('li')
-    assert_match /camping in the mountains/, ideas[0].text
-    assert_match /a book about being brave/, ideas[1].text
-    assert_match /ride horses/, ideas[2].text
+    ideas_on_page = page.all('li')
+    assert_match /camping in the mountains/, ideas_on_page[0].text
+    assert_match /a book about being brave/, ideas_on_page[1].text
+    assert_match /ride horses/, ideas_on_page[2].text
   end
 end

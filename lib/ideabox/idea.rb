@@ -1,12 +1,14 @@
 class Idea
   include Comparable
 
-  attr_accessor :id, :title, :description, :rank
+  attr_accessor :id, :title, :description, :rank, :tag
 
-  def initialize(title, description)
-    @title       = title
-    @description = description
-    @rank = 0
+  def initialize(params)
+    @title       = params["title"]
+    @description = params["description"]
+    @rank        = params["rank"] || 0
+    @id          = params["id"].to_i unless params["id"].nil?
+    @tag         = params["tag"] || "other"
   end
 
   def like!
@@ -16,9 +18,5 @@ class Idea
   def <=>(other)
     rank <=> other.rank
   end
-
-  # def database
-  #   Idea.database
-  # end
 
 end

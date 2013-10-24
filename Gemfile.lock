@@ -81,5 +81,6 @@ DEPENDENCIES
   guard-minitest
   minitest
   minitest-capybara
+  pry
   rack-test
   sinatra

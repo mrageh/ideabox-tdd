@@ -5,7 +5,7 @@ class IdeaboxApp < Sinatra::Base
   set :root, "./lib/app"
 
   post '/' do
-    idea = Idea.new(params[:title], params[:description])
+    idea = Idea.new({'title' => params[:title],'description' => params[:description], 'tag' => params[:tag]})
     IdeaStore.save(idea)
     redirect '/'
   end
@@ -14,6 +14,7 @@ class IdeaboxApp < Sinatra::Base
     idea = IdeaStore.find(id.to_i)
     idea.title = params[:title]
     idea.description = params[:description]
+    idea.tag = params[:tag]
     IdeaStore.save(idea)
     redirect '/'
   end

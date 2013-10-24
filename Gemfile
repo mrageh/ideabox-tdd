@@ -8,4 +8,5 @@ group :test do
   gem 'rack-test', require: false
   gem 'capybara', require: false
   gem 'minitest-capybara', require: false
+  gem 'pry',  require: false
 end
